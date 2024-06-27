@@ -7,6 +7,7 @@ import {
   Query,
   UnauthorizedException,
   DefaultValuePipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -20,6 +21,9 @@ import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './vo/update-user-password.vo';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { generateParseIntPipe } from 'src/utils';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('用户管理模块')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -36,6 +40,18 @@ export class UserController {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  @ApiQuery({
+    name: 'address',
+    required: true,
+    type: String,
+    description: '邮箱地址',
+    example: 'xxx@xx.com',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '发送成功',
+    type: String,
+  })
   @Get('register-captcha')
   async captcha(@Query('address') address: string) {
     const code = Math.random().toString().slice(2, 8);
