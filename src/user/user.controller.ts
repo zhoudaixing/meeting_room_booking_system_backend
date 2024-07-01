@@ -22,6 +22,7 @@ import { UpdateUserPasswordDto } from './vo/update-user-password.vo';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { generateParseIntPipe } from 'src/utils';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RefreshTokenVo } from './vo/refresh-token.vo';
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -163,10 +164,12 @@ export class UserController {
         },
       );
 
-      return {
-        access_token,
-        refresh_token,
-      };
+      const vo = new RefreshTokenVo();
+
+      vo.access_token = access_token;
+      vo.refresh_token = refresh_token;
+
+      return vo;
     } catch (e) {
       throw new UnauthorizedException('token 已失效，请重新登录');
     }
