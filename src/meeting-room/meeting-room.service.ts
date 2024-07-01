@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
 import { UpdateMeetingRoomDto } from './dto/update-meeting-room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MeetingRoom } from './entities/meeting-room.entity';
 import { Like, Repository } from 'typeorm';
+import { ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { MeetingRoomVo } from './vo/meeting-room.vo';
 
 @Injectable()
 export class MeetingRoomService {
@@ -44,10 +46,16 @@ export class MeetingRoomService {
     return await this.repository.insert(createMeetingRoomDto);
   }
 
-  findAll() {
-    return `This action returns all meetingRoom`;
-  }
-
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+    type: Number,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'success',
+    type: MeetingRoomVo,
+  })
   async findById(id: number) {
     return this.repository.findOneBy({
       id,
